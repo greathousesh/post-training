@@ -1,14 +1,9 @@
 import argparse
 
 import yaml
-from transformers import (
-    DataCollatorForSeq2Seq,
-    Trainer,
-    TrainingArguments,
-    set_seed,
-)
+from transformers import Trainer, TrainingArguments, set_seed
 
-from src.data import build_dataset
+from src.data import CausalLMCollator, build_dataset
 from src.model import load_model, load_tokenizer
 
 
@@ -39,7 +34,7 @@ def main():
         per_device_train_batch_size=train_cfg["per_device_train_batch_size"],
         gradient_accumulation_steps=train_cfg["gradient_accumulation_steps"],
         learning_rate=float(train_cfg["learning_rate"]),
-        warmup_ratio=train_cfg["warmup_ratio"],
+        warmup_steps=train_cfg.get("warmup_steps", 0),
         lr_scheduler_type=train_cfg["lr_scheduler_type"],
         logging_steps=train_cfg["logging_steps"],
         save_steps=train_cfg["save_steps"],
@@ -55,9 +50,7 @@ def main():
         remove_unused_columns=False,
     )
 
-    collator = DataCollatorForSeq2Seq(
-        tokenizer=tokenizer, padding=True, label_pad_token_id=-100
-    )
+    collator = CausalLMCollator(pad_token_id=tokenizer.pad_token_id)
 
     trainer = Trainer(
         model=model,

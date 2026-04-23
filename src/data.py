@@ -1,6 +1,31 @@
 import json
+from dataclasses import dataclass
 
+import torch
 from datasets import Dataset
+
+
+@dataclass
+class CausalLMCollator:
+    pad_token_id: int
+    label_pad_token_id: int = -100
+
+    def __call__(self, features):
+        max_len = max(len(f["input_ids"]) for f in features)
+        input_ids, labels, attn = [], [], []
+        for f in features:
+            ids = f["input_ids"]
+            lbl = f["labels"]
+            am = f.get("attention_mask", [1] * len(ids))
+            pad = max_len - len(ids)
+            input_ids.append(ids + [self.pad_token_id] * pad)
+            labels.append(lbl + [self.label_pad_token_id] * pad)
+            attn.append(am + [0] * pad)
+        return {
+            "input_ids": torch.tensor(input_ids, dtype=torch.long),
+            "labels": torch.tensor(labels, dtype=torch.long),
+            "attention_mask": torch.tensor(attn, dtype=torch.long),
+        }
 
 
 def load_jsonl(path):
