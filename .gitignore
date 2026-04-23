@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+
+# Training artifacts
+outputs/
+wandb/
+runs/
+*.bin
+*.safetensors
+*.pt
+*.ckpt
+checkpoint-*/
+
+# HF caches
+.cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+
+# Claude Code
+.claude/

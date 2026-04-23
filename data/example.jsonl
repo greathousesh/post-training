@@ -1,0 +1,4 @@
+{"messages": [{"role": "user", "content": "你好"}, {"role": "assistant", "content": "你好！有什么可以帮你的吗？"}]}
+{"messages": [{"role": "user", "content": "写一句古诗"}, {"role": "assistant", "content": "床前明月光，疑是地上霜。"}]}
+{"messages": [{"role": "system", "content": "你是一个专业的 Python 助手。"}, {"role": "user", "content": "如何反转一个列表？"}, {"role": "assistant", "content": "在 Python 中可以用 `lst[::-1]` 或 `list(reversed(lst))` 反转列表。"}]}
+{"messages": [{"role": "user", "content": "1+1 等于几？"}, {"role": "assistant", "content": "1+1=2。"}]}
