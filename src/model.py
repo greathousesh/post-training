@@ -29,13 +29,13 @@ def load_model(model_cfg, quant_cfg, lora_cfg):
             bnb_4bit_use_double_quant=quant_cfg.get("bnb_4bit_use_double_quant", True),
         )
 
-    model = AutoModelForCausalLM.from_pretrained(
-        model_cfg["name"],
-        quantization_config=bnb_config,
-        torch_dtype=torch.bfloat16,
-        device_map="auto",
-        trust_remote_code=True,
-    )
+    dtype = DTYPE_MAP[model_cfg.get("torch_dtype", "bfloat16")]
+    load_kwargs = {"torch_dtype": dtype, "trust_remote_code": True}
+    if bnb_config is not None:
+        load_kwargs["quantization_config"] = bnb_config
+        load_kwargs["device_map"] = "auto"
+
+    model = AutoModelForCausalLM.from_pretrained(model_cfg["name"], **load_kwargs)
     # use_cache is incompatible with gradient checkpointing.
     model.config.use_cache = False
 

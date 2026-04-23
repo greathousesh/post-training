@@ -1,0 +1,41 @@
+# 本地 smoke-test 配置：Mac / CPU / 无量化
+# 用途：在本地验证数据加载、tokenize、LoRA 训练流程能跑通，再上 GPU
+# 预期：data/example.jsonl (4 条) 在 M 系列 Mac 上 1-2 分钟跑完
+
+model:
+  name: Qwen/Qwen2.5-0.5B-Instruct
+  max_length: 512
+  torch_dtype: float32
+
+data:
+  train_file: data/example.jsonl
+  eval_file: null
+
+quantization:
+  load_in_4bit: false
+
+lora:
+  r: 8
+  alpha: 16
+  dropout: 0.05
+  target_modules:
+    - q_proj
+    - v_proj
+
+training:
+  output_dir: outputs/local-smoke
+  num_train_epochs: 1
+  per_device_train_batch_size: 1
+  gradient_accumulation_steps: 1
+  learning_rate: 2.0e-4
+  warmup_steps: 0
+  lr_scheduler_type: constant
+  logging_steps: 1
+  save_steps: 50
+  save_total_limit: 1
+  eval_steps: 50
+  bf16: false
+  gradient_checkpointing: false
+  optim: adamw_torch
+  report_to: none
+  seed: 42
